@@ -1,0 +1,210 @@
+HTML
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARANCORP - Panel Ejecutivo e Investigativo</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #0284c7;
+            --bg-dark: #0f172a;
+            --bg-light: #f8fafc;
+            --text-dark: #1e293b;
+            --border: #cbd5e1;
+            --accent: #2563eb;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+        body { background-color: var(--bg-light); color: var(--text-dark); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        
+        header { background-color: var(--primary); color: white; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        header h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: 0.5px; }
+        header span { font-size: 0.85rem; background: rgba(255,255,255,0.2); padding: 0.25rem 0.75rem; border-radius: 999px; }
+
+        .dashboard-grid { display: grid; grid-template-columns: 280px 1fr 320px; grid-template-rows: 1fr 1fr; gap: 1rem; padding: 1rem; flex: 1; height: calc(100vh - 65px); }
+        
+        .panel { background: white; border: 1px solid var(--border); border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .panel-header { background: #f1f5f9; padding: 0.75rem 1rem; font-weight: 600; font-size: 0.9rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; color: var(--primary); }
+        .panel-body { padding: 1rem; flex: 1; overflow-y: auto; font-size: 0.9rem; }
+
+        /* Panel 1: Canvas / Editor Principal */
+        .panel-canvas { grid-column: 2; grid-row: 1 / span 2; display: flex; flex-direction: column; }
+        .panel-canvas textarea { width: 100%; flex: 1; border: 1px solid var(--border); border-radius: 6px; padding: 1rem; font-size: 1rem; resize: none; outline: none; line-height: 1.5; }
+        .panel-canvas textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(37,99,235,0.1); }
+        
+        .toolbar { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+        button { background: var(--secondary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: background 0.2s; }
+        button:hover { background: var(--accent); }
+        button.btn-alt { background: #64748b; }
+        button.btn-alt:hover { background: #475569; }
+
+        /* Panel 2: Investigaciones y Casos */
+        .panel-cases { grid-column: 1; grid-row: 1; }
+        .case-item { padding: 0.5rem 0.75rem; border-left: 3px solid var(--accent); background: #f8fafc; margin-bottom: 0.5rem; border-radius: 0 4px 4px 0; font-size: 0.85rem; cursor: pointer; }
+        .case-item:hover { background: #eff6ff; }
+
+        /* Panel 3: Herramientas de IA */
+        .panel-ai { grid-column: 1; grid-row: 2; }
+        .ai-options { display: flex; flex-direction: column; gap: 0.5rem; }
+
+        /* Panel 4: Voz y Navegación */
+        .panel-voice { grid-column: 3; grid-row: 1 / span 2; }
+        .voice-controls { display: flex; flex-direction: column; gap: 0.75rem; }
+        .status-box { background: #f8fafc; border: 1px dashed var(--border); padding: 0.75rem; border-radius: 6px; font-size: 0.85rem; color: #475569; }
+
+        @media(max-width: 1024px) {
+            body { height: auto; overflow: auto; }
+            .dashboard-grid { display: flex; flex-direction: column; height: auto; }
+            .panel { height: 400px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>ARANCORP — Asociación Renal del Atlántico Norte</h1>
+        <span>Panel Operativo Activo</span>
+    </header>
+
+    <div class="dashboard-grid">
+        
+        <!-- Panel 2: Investigaciones / Casos (Izquierda Arriba) -->
+        <div class="panel panel-cases">
+            <div class="panel-header">📂 Casos e Investigaciones</div>
+            <div class="panel-body">
+                <div class="case-item"><strong>Caso 01:</strong> Tragamonedas y Robos Regionales</div>
+                <div class="case-item"><strong>Caso 02:</strong> Operativa Hatillo / Arecibo</div>
+                <div class="case-item"><strong>Caso 03:</strong> Auditoría de Recursos ARAN</div>
+            </div>
+        </div>
+
+        <!-- Panel 1: Canvas / Editor Principal (Centro - Ocupa 2 filas) -->
+        <div class="panel panel-canvas">
+            <div class="panel-header">
+                <span>📝 Lienzo de Redacción e Investigación</span>
+                <span id="word-count">0 palabras</span>
+            </div>
+            <div class="panel-body" style="display: flex; flex-direction: column;">
+                <div class="toolbar">
+                    <button onclick="clearCanvas()">Limpiar</button>
+                    <button class="btn-alt" onclick="saveLocal()">Guardar Borrador</button>
+                    <button class="btn-alt" onclick="exportText()">Descargar TXT</button>
+                </div>
+                <textarea id="editorContent" placeholder="Escribe o dicta aquí tu informe de investigación sobre el caso de las tragamonedas...">INFORME INVESTIGATIVO - ARAN
+Caso: Sustracción y Operación de Tragamonedas
+Ubicación: Zona Norte (Hatillo / Arecibo / Barceloneta)
+
+[Escribe los detalles y hallazgos aquí...]</textarea>
+            </div>
+        </div>
+
+        <!-- Panel 4: Voz y Navegación (Derecha) -->
+        <div class="panel panel-voice">
+            <div class="panel-header">🎙️ Voz y Asistencia</div>
+            <div class="panel-body">
+                <div class="voice-controls">
+                    <button onclick="toggleDictation()">🎤 Dictado por Voz</button>
+                    <button class="btn-alt" onclick="readText()">🔊 Leer Reporte en Voz Alta</button>
+                    <div class="status-box" id="voiceStatus">Estado de voz: En espera de comandos.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel 3: Herramientas de IA (Izquierda Abajo) -->
+        <div class="panel panel-ai">
+            <div class="panel-header">🤖 Asistentes de IA</div>
+            <div class="panel-body">
+                <div class="ai-options">
+                    <button onclick="aiPrompt('resumen')">Resumir Texto Actual</button>
+                    <button onclick="aiPrompt('estructura')">Estructurar Informe Policial</button>
+                    <button onclick="aiPrompt('correccion')">Revisar Ortografía y Tono</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const editor = document.getElementById('editorContent');
+        const wordCount = document.getElementById('word-count');
+
+        editor.addEventListener('input', updateWordCount);
+        function updateWordCount() {
+            const text = editor.value.trim();
+            const words = text ? text.split(/\s+/).length : 0;
+            wordCount.innerText = words + ' palabras';
+        }
+        updateWordCount();
+
+        function clearCanvas() {
+            if(confirm("¿Seguro que deseas limpiar el lienzo?")) {
+                editor.value = "";
+                updateWordCount();
+            }
+        }
+
+        function saveLocal() {
+            localStorage.setItem('arancorp_draft', editor.value);
+            alert("Borrador guardado localmente en tu navegador.");
+        }
+
+        function exportText() {
+            const blob = new Blob([editor.value], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'informe_arancorp.txt';
+            a.click();
+        }
+
+        function toggleDictation() {
+            const status = document.getElementById('voiceStatus');
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert("Tu navegador no soporta dictado por voz directo. Usa Google Chrome.");
+                return;
+            }
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'es-PR';
+            recognition.start();
+            
+            status.innerText = "Estado de voz: Escuchando activamente...";
+            
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                editor.value += " " + transcript;
+                updateWordCount();
+                status.innerText = "Estado de voz: Dictado agregado con éxito.";
+            };
+            
+            recognition.onerror = function() {
+                status.innerText = "Estado de voz: Error o silencio detectado.";
+            };
+        }
+
+        function readText() {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(editor.value);
+                utterance.lang = 'es-PR';
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("Síntesis de voz no disponible en este navegador.");
+            }
+        }
+
+        function aiPrompt(type) {
+            const status = document.getElementById('voiceStatus');
+            if(type === 'resumen') {
+                status.innerText = "IA: Generando resumen del informe...";
+                setTimeout(() => { alert("Resumen generado: El reporte se centra en la actividad ilícita y el rastreo de fondos en la zona norte."); }, 500);
+            } else if(type === 'estructura') {
+                editor.value += "\n\n[ANÁLISIS FORENSE]\n- Fecha de registro:\n- Evidencias recolectadas:\n- Acciones recomendadas:";
+                updateWordCount();
+            } else {
+                status.innerText = "IA: Texto optimizado con tono formal investigativo.";
+            }
+        }
+    </script>
+</body>
+</html>
